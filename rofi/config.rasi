@@ -1,0 +1,246 @@
+/**
+ *
+ * Author : Aditya Shakya (adi1090x)
+ * Github : @adi1090x
+ *
+ * Recolored: Catppuccin Mocha
+ * Configuration For Rofi Version: 1.7.3
+ **/
+
+configuration {
+	/*---------- General setting ----------*/
+	modi: "drun,run,filebrowser,window";
+	case-sensitive: false;
+	cycle: true;
+	filter: "";
+	scroll-method: 0;
+	normalize-match: true;
+	show-icons: false;
+	icon-theme: "Papirus";
+/*	cache-dir: ;*/
+	steal-focus: false;
+/*	dpi: -1;*/
+
+	/*---------- Matching setting ----------*/
+	matching: "normal";
+	tokenize: true;
+
+	/*---------- SSH settings ----------*/
+	ssh-client: "ssh";
+	ssh-command: "{terminal} -e {ssh-client} {host} [-p {port}]";
+	parse-hosts: true;
+	parse-known-hosts: true;
+
+	/*---------- Drun settings ----------*/
+	drun-categories: "";
+	drun-match-fields: "name,generic,exec,categories,keywords";
+	drun-display-format: "{name}";
+	drun-show-actions: false;
+	drun-url-launcher: "xdg-open";
+	drun-use-desktop-cache: false;
+	drun-reload-desktop-cache: false;
+	drun {
+		parse-user:   true;
+		parse-system: true;
+    }
+
+	/*---------- Run settings ----------*/
+	run-command: "{cmd}";
+	run-list-command: "";
+	run-shell-command: "{terminal} -e {cmd}";
+
+	/*---------- Window switcher settings ----------*/
+	window-match-fields: "title,class,role,name,desktop";
+	window-command: "wmctrl -i -R {window}";
+	window-format: "{w} - {c} - {t:0}";
+	window-thumbnail: false;
+
+	/*---------- History and Sorting ----------*/
+	disable-history: false;
+	sorting-method: "normal";
+	max-history-size: 25;
+
+	/*---------- Display setting ----------*/
+	display-window: "Windows";
+	display-windowcd: "Window CD";
+	display-run: "Run";
+	display-ssh: "SSH";
+	display-drun: "Apps";
+	display-combi: "Combi";
+	display-keys: "Keys";
+	display-filebrowser: "Files";
+
+	/*---------- Misc setting ----------*/
+	terminal: "rofi-sensible-terminal";
+	font: "Mono 12";
+	sort: false;
+	threads: 0;
+	click-to-exit: true;
+
+	/*---------- File browser settings ----------*/
+    filebrowser {
+      directories-first: true;
+      sorting-method:    "name";
+    }
+
+	/*---------- Other settings ----------*/
+    timeout {
+      action: "kb-cancel";
+      delay:  0;
+    }
+
+}
+
+* {
+    font:                         "3270 Nerd Font 15";
+
+    background-color:             rgba(0,0,0,0%);
+    foreground:                   #cdd6f4;
+    border-color:                 #45475a;
+    separatorcolor:               rgba(0,0,0,0%);
+    spacing:                      3;
+
+    normal-background:            rgba(0,0,0,0%);
+    normal-foreground:            #cdd6f4;
+    alternate-normal-background:  rgba(0,0,0,0%);
+    alternate-normal-foreground:  #cdd6f4;
+
+    selected-normal-background:   #45475a;
+    selected-normal-foreground:   #cdd6f4;
+
+    urgent-background:            rgba(0,0,0,0%);
+    urgent-foreground:            #f38ba8;
+    alternate-urgent-background:  rgba(0,0,0,0%);
+    alternate-urgent-foreground:  #f38ba8;
+    selected-urgent-background:   #45475a;
+    selected-urgent-foreground:   #f38ba8;
+
+    active-background:            rgba(0,0,0,0%);
+    active-foreground:            #a6e3a1;
+    alternate-active-background:  rgba(0,0,0,0%);
+    alternate-active-foreground:  #a6e3a1;
+    selected-active-background:   #45475a;
+    selected-active-foreground:   #a6e3a1;
+
+    lightbg:                      #45475a;
+    lightfg:                      #585b70;
+    red:                          #f38ba8;
+    blue:                         #89b4fa;
+}
+
+window {
+    background-color: rgba(30,30,46,50%);
+    border:           1;
+    border-color:     #45475a;
+    padding:          5;
+    border-radius:    5;
+    width:            40%;
+}
+mainbox {
+    border:  0;
+    padding: 0;
+    width:   1;
+}
+message {
+    border:       1px dash 0px 0px;
+    border-color: @separatorcolor;
+    padding:      1px;
+}
+textbox {
+    text-color: @foreground;
+}
+listview {
+    fixed-height: 0;
+    border:       2px dash 0px 0px;
+    border-color: @separatorcolor;
+    spacing:      5px;
+    scrollbar:    false;
+    padding:      2px 0px 0px;
+}
+element {
+    border:  0;
+    padding: 1px;
+}
+element-text {
+    background-color: inherit;
+    text-color:       inherit;
+    horizontal-align: 0.5;
+}
+element.normal.normal {
+    background-color: @normal-background;
+    text-color:       @normal-foreground;
+}
+element.normal.urgent {
+    background-color: @urgent-background;
+    text-color:       @urgent-foreground;
+}
+element.normal.active {
+    background-color: @active-background;
+    text-color:       @active-foreground;
+}
+element.selected.normal {
+    background-color: @selected-normal-background;
+    text-color:       @selected-normal-foreground;
+}
+element.selected.urgent {
+    background-color: @selected-urgent-background;
+    text-color:       @selected-urgent-foreground;
+}
+element.selected.active {
+    background-color: @selected-active-background;
+    text-color:       @selected-active-foreground;
+}
+element.alternate.normal {
+    background-color: @alternate-normal-background;
+    text-color:       @alternate-normal-foreground;
+}
+element.alternate.urgent {
+    background-color: @alternate-urgent-background;
+    text-color:       @alternate-urgent-foreground;
+}
+element.alternate.active {
+    background-color: @alternate-active-background;
+    text-color:       @alternate-active-foreground;
+}
+scrollbar {
+    width:        1px;
+    border:       0;
+    handle-width: 3px;
+    padding:      0;
+}
+mode-switcher {
+    border:       2px dash 0px 0px;
+    border-color: @separatorcolor;
+}
+button.selected {
+    background-color: @selected-normal-background;
+    text-color:       @selected-normal-foreground;
+}
+inputbar {
+    enabled:    false;
+    spacing:    0;
+    text-color: @normal-foreground;
+    padding:    0px;
+}
+case-indicator {
+    spacing:    0;
+    text-color: @normal-foreground;
+}
+entry {
+    enabled:    false;
+    spacing:    0;
+    text-color: @normal-foreground;
+}
+prompt {
+    spacing:    0;
+    text-color: @normal-foreground;
+}
+inputbar {
+    children: [ prompt, textbox-prompt-colon, entry, case-indicator ];
+}
+textbox-prompt-colon {
+    expand:     false;
+    str:        ":";
+    margin:     0px 0.3em 0em 0em;
+    text-color: @normal-foreground;
+}
