@@ -126,21 +126,42 @@ install_oh_my_zsh() {
     sudo chsh -s "$(command -v zsh)" "$USER_NAME" || warn "Could not change default shell automatically"
   fi
 }
-copy_configs() {
-  info "Copying config files into $USER_HOME/.config ..."
+configure_zsh() {
+  info "Configuring .zshrc..."
 
-  run_as_user mkdir -p "$USER_HOME/.config/hypr" "$USER_HOME/.config/kitty" "$USER_HOME/.config/rofi"
+  local zshrc="$USER_HOME/.zshrc"
 
-  install -Dm644 "$REPO_DIR/configs/hypr/hyprland.conf" "$USER_HOME/.config/hypr/hyprland.conf"
-  install -Dm644 "$REPO_DIR/configs/hypr/hyprlock.conf" "$USER_HOME/.config/hypr/hyprlock.conf"
-  install -Dm644 "$REPO_DIR/configs/hypr/hypridle.conf" "$USER_HOME/.config/hypr/hypridle.conf"
-  install -Dm644 "$REPO_DIR/configs/kitty/kitty.conf" "$USER_HOME/.config/kitty/kitty.conf"
-  install -Dm755 "$REPO_DIR/configs/kitty/welcome.sh" "$USER_HOME/.config/kitty/welcome.sh"
-  install -Dm644 "$REPO_DIR/configs/rofi/config.rasi" "$USER_HOME/.config/rofi/config.rasi"
+  run_as_user touch "$zshrc"
 
-  sudo chown -R "$USER_NAME":"$USER_NAME" "$USER_HOME/.config/hypr" "$USER_HOME/.config/kitty" "$USER_HOME/.config/rofi"
+  if run_as_user grep -q '^ZSH_THEME=' "$zshrc"; then
+    run_as_user sed -i 's/^ZSH_THEME=.*/ZSH_THEME="daveverwer"/' "$zshrc"
+  else
+    printf '\nZSH_THEME="daveverwer"\n' | run_as_user tee -a "$zshrc" >/dev/null
+  fi
+
+  if ! run_as_user grep -q 'exec start-hyprland' "$zshrc"; then
+    cat <<'EOF' | run_as_user tee -a "$zshrc" >/dev/null
+
+# Auto start Hyprland on login (TTY only)
+if [[ -z "$DISPLAY" ]] && [[ "$(tty)" == "/dev/tty1" ]]; then
+  exec start-hyprland
+fi
+EOF
+  fi
 }
 
+
+copy_configs() {
+  info "Copying configs to $USER_HOME/.config ..."
+
+  run_as_user mkdir -p "$USER_HOME/.config"
+
+  run_as_user cp -r "$REPO_DIR/hypr" "$USER_HOME/.config/"
+  run_as_user cp -r "$REPO_DIR/kitty" "$USER_HOME/.config/"
+  run_as_user cp -r "$REPO_DIR/rofi" "$USER_HOME/.config/"
+
+  sudo chown -R "$USER_NAME":"$USER_NAME" "$USER_HOME/.config"
+}
 print_done() {
   cat <<MSG
 
@@ -170,6 +191,7 @@ main() {
   configure_services
   apply_gsettings
   install_oh_my_zsh
+  configure_zsh
   copy_configs
   print_done
 }
