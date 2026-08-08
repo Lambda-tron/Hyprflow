@@ -57,6 +57,8 @@ install_packages() {
     gnome-tweaks
     hyprshot
     hyprlock
+    mako
+    libnotify
     zsh
     rofi
     firefox
@@ -162,6 +164,16 @@ copy_configs() {
 
   sudo chown -R "$USER_NAME":"$USER_NAME" "$USER_HOME/.config"
 }
+
+install_scripts() {
+  info "Installing user scripts to $USER_HOME/.local/bin ..."
+
+  run_as_user mkdir -p "$USER_HOME/.local/bin"
+  run_as_user cp "$REPO_DIR/bin/battery-warning.sh" "$USER_HOME/.local/bin/battery-warning.sh"
+  run_as_user chmod +x "$USER_HOME/.local/bin/battery-warning.sh"
+
+  sudo chown -R "$USER_NAME":"$USER_NAME" "$USER_HOME/.local/bin"
+}
 print_done() {
   cat <<MSG
 
@@ -173,11 +185,13 @@ Installed:
 - Hyprland desktop packages
 - Kitty / Rofi / Hypr* configs
 - GTK dark theme preferences
+- battery-warning.sh -> ~/.local/bin/
 
 Config locations:
 - ~/.config/hypr/
 - ~/.config/kitty/
 - ~/.config/rofi/
+- ~/.local/bin/
 
 You may want to reboot or log out and back in before launching Hyprland.
 MSG
@@ -193,6 +207,7 @@ main() {
   install_oh_my_zsh
   configure_zsh
   copy_configs
+  install_scripts
   print_done
 }
 
