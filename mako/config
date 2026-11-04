@@ -1,0 +1,65 @@
+# ─────────────────────────────────────────────
+# Mako — Catppuccin Mocha
+# Matches the Hyprland purple border theme
+# ─────────────────────────────────────────────
+
+# Position
+anchor=top-right
+
+# Outer spacing from screen edges
+margin=20
+
+# Notification size
+width=420
+height=140
+
+# Inner spacing
+padding=18
+
+# Typography
+font=JetBrainsMono Nerd Font 12
+
+# Colors
+background-color=#313244f2
+text-color=#cdd6f4ff
+
+# Purple accent border
+border-color=#cba6f7ff
+border-size=3
+border-radius=10
+
+# Progress bars
+progress-color=over #cba6f755
+
+# Notification behaviour
+default-timeout=7000
+ignore-timeout=1
+max-visible=5
+
+# Display settings
+layer=overlay
+icons=1
+max-icon-size=48
+markup=1
+actions=1
+
+# Group similar notifications
+group-by=app-name
+
+# Low-priority notifications
+[urgency=low]
+border-color=#585b70ff
+text-color=#bac2deff
+default-timeout=5000
+
+# Normal notifications
+[urgency=normal]
+border-color=#cba6f7ff
+default-timeout=7000
+
+# Important notifications
+[urgency=high]
+background-color=#313244f2
+border-color=#f38ba8ff
+text-color=#f5e0dcff
+default-timeout=10000

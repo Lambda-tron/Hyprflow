@@ -53,48 +53,50 @@ install_packages() {
   info "Installing packages from the repo list plus config dependencies..."
 
   local packages=(
-    gnome-themes-extra
-    gnome-tweaks
-    hyprshot
-    hyprlock
-    mako
-    libnotify
-    zsh
-    rofi
-    firefox
-    dolphin
-    kitty
+    # Compositor + session
     hyprland
     wayland
+    hyprlock
+    hypridle
+    hyprshot
+    grim
+    # Bar, launcher, notifications, terminal
+    waybar
+    rofi
+    mako
+    libnotify
+    foot
+    # Audio stack (PipeWire + WirePlumber; wpctl / pw-play come from these)
     pipewire
     pipewire-pulse
     pipewire-alsa
     wireplumber
-    pavucontrol
+    # Hardware controls used by keybinds / scripts
     brightnessctl
-    qt5ct
-    transmission-gtk
-    openssh
-    kate
-    hypridle
-    bluez
-    bluez-utils
-    blueman
-    nemo
-    grim
     playerctl
     wlsunset
     upower
-    papirus-icon-theme
+    lm_sensors
+    # Helpers the config scripts rely on
+    jq
+    vim
+    network-manager-applet
     wmctrl
+    # Shell, theming, fonts
+    zsh
+    qt5ct
+    gnome-themes-extra
+    gnome-tweaks
+    papirus-icon-theme
+    ttf-jetbrains-mono-nerd
+    # Misc apps
+    firefox
+    kate
+    transmission-gtk
+    openssh
   )
 
   sudo pacman -S --needed --noconfirm "${packages[@]}"
-}
-
-configure_services() {
-  info "Enabling Bluetooth service..."
-  sudo systemctl enable --now bluetooth.service || warn "Could not enable bluetooth.service"
 }
 
 apply_gsettings() {
@@ -158,11 +160,43 @@ copy_configs() {
 
   run_as_user mkdir -p "$USER_HOME/.config"
 
-  run_as_user cp -r "$REPO_DIR/hypr" "$USER_HOME/.config/"
-  run_as_user cp -r "$REPO_DIR/kitty" "$USER_HOME/.config/"
-  run_as_user cp -r "$REPO_DIR/rofi" "$USER_HOME/.config/"
+  run_as_user cp -r "$REPO_DIR/hypr"   "$USER_HOME/.config/"
+  run_as_user cp -r "$REPO_DIR/rofi"   "$USER_HOME/.config/"
+  run_as_user cp -r "$REPO_DIR/waybar" "$USER_HOME/.config/"
+  run_as_user cp -r "$REPO_DIR/mako"   "$USER_HOME/.config/"
+  run_as_user cp -r "$REPO_DIR/foot"   "$USER_HOME/.config/"
 
   sudo chown -R "$USER_NAME":"$USER_NAME" "$USER_HOME/.config"
+}
+
+# Binaries the configs call but that are NOT installed here (you install these
+# yourself). We only check and print a short note about each missing one.
+warn_missing_optional() {
+  info "Checking for optional helper binaries..."
+
+  # name|short description of what it does / where it's used
+  local optional=(
+    "plume|file manager (Alt+E, \$fileManager in hyprland.conf)"
+    "audiopanel|audio mixer panel (Waybar volume click / mic right-click)"
+    "bluetooz|bluetooth manager (Waybar bluetooth click)"
+  )
+
+  local missing=()
+  local entry name desc
+  for entry in "${optional[@]}"; do
+    name="${entry%%|*}"
+    desc="${entry#*|}"
+    if ! run_as_user command -v "$name" >/dev/null 2>&1; then
+      missing+=("  - ${name}: ${desc}")
+    fi
+  done
+
+  if (( ${#missing[@]} )); then
+    warn "The following helpers are not installed. Install them separately:"
+    printf '%s\n' "${missing[@]}"
+  else
+    info "All optional helper binaries are present."
+  fi
 }
 
 install_scripts() {
@@ -182,16 +216,22 @@ Setup complete.
 Installed:
 - yay
 - Oh My Zsh
-- Hyprland desktop packages
-- Kitty / Rofi / Hypr* configs
+- Hyprland desktop packages (Waybar, Rofi, Mako, foot, PipeWire...)
+- Hypr* / Waybar / Rofi / Mako / foot configs
 - GTK dark theme preferences
 - battery-warning.sh -> ~/.local/bin/
 
 Config locations:
 - ~/.config/hypr/
-- ~/.config/kitty/
+- ~/.config/waybar/
 - ~/.config/rofi/
+- ~/.config/mako/
+- ~/.config/foot/
 - ~/.local/bin/
+
+Note: plume (file manager), audiopanel and bluetooz are NOT installed by this
+script - install them yourself. See the warnings above for which ones are
+missing.
 
 You may want to reboot or log out and back in before launching Hyprland.
 MSG
@@ -202,12 +242,12 @@ main() {
   install_base_dependencies
   install_yay
   install_packages
-  configure_services
   apply_gsettings
   install_oh_my_zsh
   configure_zsh
   copy_configs
   install_scripts
+  warn_missing_optional
   print_done
 }
 

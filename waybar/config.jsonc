@@ -1,0 +1,248 @@
+// ╭──────────────────────────────────────────╮
+// │   Waybar — Catppuccin Mocha / Lilac        │
+// ╰──────────────────────────────────────────╯
+{
+    "layer": "top",
+    "position": "top",
+    "height": 36,
+    "spacing": 6,
+    "margin-top": 6,
+    "margin-left": 10,
+    "margin-right": 10,
+
+    "modules-left": [
+        "hyprland/workspaces",
+        "hyprland/submap"
+    ],
+    "modules-center": [
+        "clock"
+    ],
+    "modules-right": [
+        "tray",
+        "cpu",
+        "memory",
+        "custom/fan",
+        "custom/language",
+        "custom/mic",
+        "group/audio",
+        "backlight",
+        "bluetooth",
+        "battery",
+        "group/powermenu"
+    ],
+
+    // ─── Audio group: icon + hover-to-reveal slider ──────────────
+    "group/audio": {
+        "orientation": "horizontal",
+        "drawer": {
+            "transition-duration": 300,
+            "transition-left-to-right": false,
+            "click-to-reveal": false
+        },
+        "modules": [
+            "pulseaudio",
+            "pulseaudio/slider"
+        ]
+    },
+
+    "pulseaudio/slider": {
+        "min": 0,
+        "max": 100,
+        "orientation": "horizontal"
+    },
+
+    // ─── Power sub-group: click handle reveals the menu ──────────
+    "group/powermenu": {
+        "orientation": "horizontal",
+        "drawer": {
+            "transition-duration": 300,
+            "transition-left-to-right": false,
+            "click-to-reveal": false
+        },
+        "modules": [
+            "custom/power",
+            "custom/lock",
+            "custom/logout",
+            "custom/reboot",
+            "custom/shutdown"
+        ]
+    },
+
+    // ─── Workspaces ──────────────────────────────────────────────
+    "hyprland/workspaces": {
+        "format": "{name}",
+        "on-click": "activate",
+        "on-scroll-up": "hyprctl dispatch workspace e+1",
+        "on-scroll-down": "hyprctl dispatch workspace e-1"
+    },
+
+    "hyprland/submap": {
+        "format": "✨ {}",
+        "max-length": 20,
+        "tooltip": false
+    },
+
+    // ─── Clock ───────────────────────────────────────────────────
+    "clock": {
+        "format": "{:%H:%M}",
+        "format-alt": "{:%a %d %b}",
+        "tooltip-format": "<span color='#cba6f7'><big>{:%Y %B}</big></span>\n<tt><small>{calendar}</small></tt>",
+        "calendar": {
+            "mode": "month",
+            "format": {
+                "months":  "<span color='#cba6f7'><b>{}</b></span>",
+                "days":    "<span color='#cdd6f4'>{}</span>",
+                "weekdays":"<span color='#b4befe'><b>{}</b></span>",
+                "today":   "<span color='#f38ba8'><b>{}</b></span>"
+            }
+        }
+    },
+
+    // ─── CPU usage ───────────────────────────────────────────────
+    "cpu": {
+        "format": "󰻠 {usage}%",
+        "interval": 2,
+        "tooltip": false
+    },
+
+    // ─── RAM usage ───────────────────────────────────────────────
+    "memory": {
+        "format": "󰍛 {percentage}%",
+        "interval": 5,
+        "tooltip-format": "RAM {used:0.1f}G / {total:0.1f}G"
+    },
+
+    // ─── Fan speed (approx % of max RPM, see scripts/fan.sh) ──────
+    "custom/fan": {
+        "return-type": "json",
+        "exec": "~/.config/waybar/scripts/fan.sh",
+        "format": "󰈐 {}",
+        "interval": 3,
+        "tooltip": true
+    },
+
+    // ─── Keyboard layout (us / se / jp) ──────────────────────────
+    // Custom module (not hyprland/language): reads only the MAIN keyboard so
+    // bluetooth devices can't blank or switch the label. Click or $mainMod+
+    // Shift+Space cycles; signal 9 refreshes it instantly.
+    "custom/language": {
+        "exec": "~/.config/waybar/scripts/kb-layout.sh",
+        "format": "󰌌 {}",
+        "interval": 2,
+        "signal": 9,
+        "on-click": "~/.config/hypr/scripts/cycle-kb-layout.sh",
+        "tooltip": false
+    },
+
+    // ─── Audio ───────────────────────────────────────────────────
+    "pulseaudio": {
+        "format": "{icon} {volume}%",
+        "format-muted": "󰖁",
+        "format-bluetooth": "󰂯 {volume}%",
+        "format-bluetooth-muted": "󰂲",
+        "format-icons": {
+            "headphone": "󰋋",
+            "headset": "󰋎",
+            "default": ["󰕿", "󰖀", "󰕾"]
+        },
+        "scroll-step": 5,
+        "on-click": "/home/sosa/.cargo/bin/audiopanel",
+        "on-scroll-up": "~/.config/hypr/scripts/volume.sh up",
+        "on-scroll-down": "~/.config/hypr/scripts/volume.sh down",
+        "tooltip-format": "{desc}\n{volume}%  ·  click: mixer  ·  scroll: volume"
+    },
+
+    // ─── Microphone ──────────────────────────────────────────────
+    "custom/mic": {
+        "return-type": "json",
+        "exec": "~/.config/waybar/scripts/mic.sh",
+        "interval": 5,
+        "signal": 8,
+        "on-click": "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle && pkill -RTMIN+8 waybar",
+        "on-click-right": "audiopanel",
+        "on-scroll-up": "wpctl set-volume @DEFAULT_AUDIO_SOURCE@ 5%+ && pkill -RTMIN+8 waybar",
+        "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SOURCE@ 5%- && pkill -RTMIN+8 waybar",
+        "tooltip": true
+    },
+
+    // ─── Backlight (brightness) ──────────────────────────────────
+    "backlight": {
+        "format": "󰖙 {percent}%",
+        "on-scroll-up": "brightnessctl -e4 -n2 set 5%+",
+        "on-scroll-down": "brightnessctl -e4 -n2 set 5%-",
+        "tooltip": false
+    },
+
+    // ─── Network ─────────────────────────────────────────────────
+    "network": {
+        "format-wifi": "󰤨 {essid}",
+        "format-ethernet": "󰈀 wired",
+        "format-disconnected": "󰤭 off",
+        "format-disabled": "󰖪 off",
+        "max-length": 11,
+        "tooltip-format-wifi": "{essid}  ({signalStrength}%)\n{ipaddr}",
+        "tooltip-format-ethernet": "{ifname}\n{ipaddr}",
+        "tooltip-format-disconnected": "disconnected",
+        "tooltip-format-disabled": "WiFi disabled",
+        "on-click": "pgrep -x nm-applet >/dev/null || nm-applet --indicator &"
+    },
+
+    // ─── Bluetooth ───────────────────────────────────────────────
+    "bluetooth": {
+        "format": "󰂯",
+        "format-on": "󰂯",
+        "format-off": "󰂲",
+        "format-disabled": "󰂲",
+        "format-connected": "󰂱",
+        "on-click": "bluetooz",
+        "tooltip-format": "Bluetooth {status}",
+        "tooltip-format-connected": "{controller_alias}\n{num_connections} connected\n{device_enumerate}",
+        "tooltip-format-enumerate-connected": "{device_alias}"
+    },
+
+    // ─── Battery ─────────────────────────────────────────────────
+    "battery": {
+        "states": {
+            "good": 80,
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "{icon} {capacity}%",
+        "format-charging": "󰂄 {capacity}%",
+        "format-plugged": "󰂅 {capacity}%",
+        "format-icons": ["󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
+        "tooltip-format": "{timeTo}\n{power}W"
+    },
+
+    // ─── System tray ─────────────────────────────────────────────
+    "tray": {
+        "icon-size": 16,
+        "spacing": 10
+    },
+
+    // ─── Power menu ──────────────────────────────────────────────
+    "custom/power": {
+        "format": " ",
+        "tooltip-format": "Power menu"
+    },
+    "custom/lock": {
+        "format": "󰌾",
+        "on-click": "hyprlock",
+        "tooltip-format": "Lock"
+    },
+    "custom/logout": {
+        "format": "󰍃",
+        "on-click": "hyprctl dispatch exit",
+        "tooltip-format": "Exit Hyprland"
+    },
+    "custom/reboot": {
+        "format": "󰜉",
+        "on-click": "systemctl reboot",
+        "tooltip-format": "Reboot"
+    },
+    "custom/shutdown": {
+        "format": "󰐥",
+        "on-click": "systemctl poweroff",
+        "tooltip-format": "Shutdown"
+    }
+}

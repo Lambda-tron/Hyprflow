@@ -20,12 +20,19 @@ this configuration is built on arch linux using the hyprland wayland compositor.
 core components include
 
 hyprland as the window manager and compositor  
-kitty as the terminal emulator  
+foot as the terminal emulator  
+waybar as the status bar  
 rofi as the application launcher  
+mako for notifications  
 hyprlock for screen locking  
 hypridle for idle and power management  
 zsh with oh my zsh for shell experience  
 yay for aur package management  
+
+some helpers are not installed by the script and are left for you to install
+yourself: plume (file manager), audiopanel (audio panel) and bluetooz
+(bluetooth). the installer checks for these and prints a short note about any
+that are missing.
 
 additional tools such as file managers system utilities and media controls are included only where necessary to support a complete but minimal system.
 
