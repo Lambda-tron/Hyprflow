@@ -29,10 +29,10 @@ hypridle for idle and power management
 zsh with oh my zsh for shell experience  
 yay for aur package management  
 
-some helpers are not installed by the script and are left for you to install
-yourself: plume (file manager), audiopanel (audio panel) and bluetooz
-(bluetooth). the installer checks for these and prints a short note about any
-that are missing.
+besides the desktop, the installer also sets up the apps and dev tools from my
+own machine: firefox, chromium, discord, vesktop, obs, claude code, japanese
+fonts (noto-fonts-cjk), networkmanager, rust, flutter, jdk 17, node/npm,
+postgresql and scrcpy.
 
 additional tools such as file managers system utilities and media controls are included only where necessary to support a complete but minimal system.
 
@@ -48,7 +48,7 @@ everything is kept readable and easy to modify so you can understand and control
 
 clone the repository
 
-git clone https://github.com/yourusername/hyprflow.git
+git clone https://github.com/Lambda-tron/hyprflow.git
 
 change into the directory
 
@@ -64,7 +64,25 @@ run the installer
 
 the script will install all required packages set up yay install oh my zsh and place all configuration files into the correct directories in your home folder.
 
-after installation log out and start a hyprland session.
+after installation reboot and log in on tty1, hyprland starts automatically.
+
+## own apps
+
+plume (file manager + file picker for firefox) and audiopanel (audio mixer) are
+separate private repos. put your ssh key in ~/.ssh first, then:
+
+```sh
+# plume: builds, installs to ~/.local/bin and registers the file picker (asks for sudo once)
+git clone git@github.com:Lambda-tron/plume.git ~/plume && ~/plume/portal/install.sh
+
+# audiopanel
+git clone git@github.com:Lambda-tron/audiopanel.git ~/audiopanel && cd ~/audiopanel \
+  && cargo install --path . \
+  && install -Dm644 packaging/audiopanel.desktop ~/.local/share/applications/audiopanel.desktop
+```
+
+plume's installer also sets a firefox system policy, so firefox uses plume for
+open/save dialogs automatically (restart firefox once after installing).
 
 ## notes
 
