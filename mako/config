@@ -63,3 +63,12 @@ background-color=#313244f2
 border-color=#f38ba8ff
 text-color=#f5e0dcff
 default-timeout=10000
+
+# Volume popup (volume.sh): slim bar — the progress fill spans the whole box,
+# so a smaller box = a thinner bar.
+[app-name=volume]
+width=260
+padding=4,12
+font=JetBrainsMono Nerd Font 10
+border-size=2
+border-radius=6
